@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Latent viewer</title>
+
+  <!-- load our JS bundle -->
+  <!-- <script type="module" src="./grid-integration.js"></script> -->
+
+  <style>
+    html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:#000}
+    .container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+    .left-pane {
+      width: 200px;
+      background: #1a1a1a;
+      border-right: 1px solid #333;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      justify-content: center; /* vertically center grid + pill as a group */
+      position: relative;
+      min-height: 0;
+    }
+
+    /* Wrap hint, grid, and loading pill */
+    .latent-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    .grid-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Color picker */
+    .color-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .color-picker-label {
+      color: #bbb;
+      font-size: 14px;
+      user-select: none;
+    }
+    #bgColorPicker {
+      border: none;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: none;
+    }
+
+    .latent-grid-hint {
+      color: #bbb;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+    .right-pane {
+      flex: 1;
+      position: relative;
+    }
+    .right-pane pc-app {
+      width: 100%;
+      height: 100%;
+    }
+    button {
+      cursor: pointer;
+      padding: 8px 16px;
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #444;
+    }
+
+    /* Responsive: stack panes vertically on narrow screens */
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+      }
+      .left-pane {
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid #333;
+        padding-top: 12px;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-height: auto;
+      }
+      .right-pane {
+        width: 100%;
+        height: 60vh;
+      }
+    }
+  </style>
+  <script type="module" crossorigin src="assets/index-BdYpCIbj.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="left-pane">
+      <div class="latent-section">
+        <div class="latent-grid-hint">Drag the handle to explore a few samples from the latent space</div>
+        <div class="grid-container">
+          <div id="latentGrid"></div>
+        </div>
+        <!-- Background color picker -->
+        <div class="color-picker">
+          <label for="bgColorPicker" class="color-picker-label">Background color</label>
+          <input type="color" id="bgColorPicker" value="#222222" />
+        </div>
+      </div>
+    </div>
+    <div class="right-pane">
+      <pc-app antialias="false" high-resolution="true">
+        <pc-scene>
+          <pc-entity name="cameraRoot">
+            <pc-entity name="camera" position="0 0 2">
+              <pc-camera clear-color="#222222ff"></pc-camera>
+              <pc-scripts>
+                <pc-script name="cameraControls"
+                           attributes='{"distanceMin":0.5,"distanceMax":8,"frameOnStart":true}'></pc-script>
+              </pc-scripts>
+            </pc-entity>
+            <pc-scripts>
+              <pc-script name="xrControllers"></pc-script>
+              <pc-script name="xrNavigation"></pc-script>
+            </pc-scripts>
+          </pc-entity>
+        </pc-scene>
+      </pc-app>
+    </div>
+  </div>
+
+</body>
+</html>
