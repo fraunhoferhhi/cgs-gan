@@ -86,6 +86,12 @@ Vanilla FFHQ
 - [ffhq_512.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhq_512.pkl?download=true)
 
 
+## Visualize
+
+Visualize our results using https://github.com/Florian-Barthel/splatviz
+<img src="assets/gan_mode.png" style="width: 600px;">
+
+
 ## Results
 
 
