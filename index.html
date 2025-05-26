@@ -55,11 +55,11 @@
         <ul class="authors affiliations">
             <li>
                 <sup>1</sup>
-                Humboldt University
+                Humboldt University of Berlin
             </li>
             <li>
                 <sup>2</sup>
-                Heinrich-Hertz Institut
+                Fraunhofer Heinrich Hertz Institute, HHI
             </li>
         </ul>
         <div class="publication-links">
@@ -154,6 +154,8 @@
     <img src="images/arch_2.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
 
     <h2> Interactive Latent Viewer </h2>
+    <p>Explore the latent space using the web viewer from <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/">PlayCanvas</a>
+    paired with <a href="https://github.com/fraunhoferhhi/Self-Organizing-Gaussians"> SOG Compression</a>.</p>
     <iframe
           src="./viewer/index.html"
           width="100%"
@@ -195,14 +197,58 @@
         overall best results when a 3D consistent scene is required. Quantitative comparisons (FID and consistent FID<sub>3D</sub>) are found in our paper.
     </p>
 
-    <img src="images/gghead.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
-    <p style="text-align: center">GGHead (with frontal view-conditioning) trained on FFHQ</p>
-    <img src="images/gsgan.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
-    <p style="text-align: center">GSGAN (with frontal view-conditioning) trained on FFHQ</p>
-    <img src="images/ours_ffhq.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
-    <p style="text-align: center"><b>Ours</b> trained on FFHQ</p>
-    <img src="images/ours_ffhqc.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
-    <p style="text-align: center"><b>Ours</b> trained on our proposed dataset FFHQC</p>
+    <table style="table-layout: fixed">
+        <tr style="text-align: center">
+            <td>
+                GSGAN (FFHQ)
+            </td>
+            <td>
+                GGHead (FFHQ)
+            </td>
+<!--            <td>-->
+<!--                Ours (FFHQ)-->
+<!--            </td>-->
+            <td>
+                Ours (FFHQC)
+            </td>
+        </tr>
+        <tr>
+            <td width="(100/3)%">
+                <video controls style="border-radius: 10px;" autoplay loop muted>
+                    <source src="videos/compare/gsgan_ffhq.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </td>
+            <td width="(100/3)%">
+                <video controls style="border-radius: 10px;" autoplay loop muted>
+                    <source src="videos/compare/gghead_ffhq.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </td>
+<!--            <td>-->
+<!--                <video controls style="border-radius: 10px;" autoplay loop muted>-->
+<!--                    <source src="videos/compare/ours_ffhq.mp4" type="video/mp4">-->
+<!--                    Your browser does not support the video tag.-->
+<!--                </video>-->
+<!--            </td>-->
+            <td width="(100/3)%">
+                <video controls style="border-radius: 10px;" autoplay loop muted>
+                    <source src="videos/compare/ours_ffhqc.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </td>
+        </tr>
+
+    </table>
+
+<!--    <img src="images/gghead.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
+<!--    <p style="text-align: center">GGHead (with frontal view-conditioning) trained on FFHQ</p>-->
+<!--    <img src="images/gsgan.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
+<!--    <p style="text-align: center">GSGAN (with frontal view-conditioning) trained on FFHQ</p>-->
+<!--    <img src="images/ours_ffhq.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
+<!--    <p style="text-align: center"><b>Ours</b> trained on FFHQ</p>-->
+<!--    <img src="images/ours_ffhqc.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
+<!--    <p style="text-align: center"><b>Ours</b> trained on our proposed dataset FFHQC</p>-->
 
     <h2> View Conditioning </h2>
     <p>
@@ -305,11 +351,20 @@
 
 
     <h2 id="citation"> Citation </h2>
-    <pre style="border-radius: 10px;"><code>
+    <pre style="border-radius: 10px;"><code>@misc{barthel2025cgsgan,
+      title={CGS-GAN: 3D Consistent Gaussian Splatting GANs for High Resolution Human Head Synthesis},
+      author={Florian Barthel and Wieland Morgenstern and Paul Hinzer and Anna Hilsmann and Peter Eisert},
+      year={2025},
+      eprint={2505.17590},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2505.17590},
+}
 </code></pre>
     <p>
     Check out our other works <a href="https://Florian-Barthel.github.io" target="_blank">here</a>.
     </p>
+
 
     <h2>References</h2>
     <ul style="list-style-type:disc;">
@@ -324,6 +379,12 @@
         </li>
         <li>
             <a href="https://hse1032.github.io/gsgan">GSGAN</a>
+        </li>
+        <li>
+            <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/">PlayCanvas</a>
+        </li>
+        <li>
+            <a href="https://github.com/fraunhoferhhi/Self-Organizing-Gaussians"> SOG Compression</a>
         </li>
     </ul>
 
