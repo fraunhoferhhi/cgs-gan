@@ -1,0 +1,376 @@
+/* Lightly modified version of https://nvlabs.github.io/stylegan3/ */
+
+:root {
+    --small-thumb-border-radius: 2px;
+    --larger-thumb-border-radius: 3px;
+}
+
+html {
+    font-size: 14px;
+    line-height: 1.6;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+@media(min-width: 900px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    padding-bottom: 150px;
+}
+
+.base-grid,
+.n-header,
+.n-byline,
+.n-title,
+.n-article,
+.n-footer {
+    display: grid;
+    justify-items: normal;
+    grid-template-columns: [screen-start] 8px [page-start kicker-start text-start gutter-start middle-start] 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr [text-end page-end gutter-end kicker-end middle-end] 8px [screen-end];
+    grid-column-gap: 8px;
+}
+
+.grid {
+    display: grid;
+    grid-column-gap: 8px;
+}
+
+
+@media (min-width: 1180px) {
+    .base-grid,
+    .n-header,
+    .n-byline,
+    .n-title,
+    .n-article,
+    .n-footer {
+        display: grid;
+        justify-items: normal;
+        grid-template-columns: [screen-start] 1fr [page-start kicker-start] 90px [middle-start] 90px [text-start kicker-end] 90px 90px 90px 90px 90px 90px 90px 90px [text-end gutter-start] 90px [middle-end] 90px [page-end gutter-end] 1fr [screen-end];
+        grid-column-gap: 32px;
+    }
+    .grid {
+        grid-column-gap: 32px;
+    }
+}
+
+img {
+    width: 100%;
+}
+
+.base-grid {
+    grid-column: screen;
+}
+
+
+/* default grid column assignments */
+
+.n-title>* {
+    grid-column: text;
+}
+
+.n-article>* {
+    grid-column: text;
+}
+
+.n-header {
+    height: 0px;
+}
+
+.n-footer {
+    height: 60px;
+}
+
+.n-title {
+    padding: 3rem 0 1.5rem;
+}
+
+.l-page {
+    grid-column: page;
+}
+
+.l-article {
+    grid-column: text;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1em;
+}
+
+.pixelated {
+    image-rendering: pixelated;
+}
+
+strong {
+    font-weight: 600;
+}
+
+
+/*------------------------------------------------------------------*/
+
+
+/* title */
+
+.n-title h1 {
+    font-family: "Barlow", system-ui, Arial, sans-serif;
+    color: #082333;
+    grid-column: text;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 1.1em;
+    margin: 0 0 0.5rem;
+    text-align: center;
+    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+
+}
+
+@media (min-width: 900px) {
+    .n-title h1 {
+        font-size: 45px;
+    }
+}
+
+
+/*------------------------------------------------------------------*/
+
+
+/* article */
+.n-article {
+    color: rgb(33, 40, 53);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 2rem;
+}
+
+.n-article h2 {
+    padding-top: 30px;
+    contain: layout style;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.25em;
+    margin: 2rem 0 1.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 1rem;
+}
+
+@media (min-width: 1000px) {
+    .n-article {
+        line-height: 1.7;
+    }
+    .n-article h2 {
+        font-size: 36px;
+    }
+}
+
+
+/*------------------------------------------------------------------*/
+
+
+/* byline */
+.n-byline {
+    contain: style;
+    overflow: hidden;
+    /*border-top: 1px solid rgba(0, 0, 0, 0.1);*/
+    font-size: 0.8rem;
+    line-height: 1.8em;
+    padding-bottom: 1.5em;
+    min-height: 1.8em;
+    background: #EEE;
+}
+
+.n-byline .byline {
+    grid-column: text;
+}
+
+.byline {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.grid {
+    display: grid;
+    grid-column-gap: 8px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-column-gap: 16px;
+    }
+}
+
+.n-byline p {
+    margin: 0;
+}
+
+.n-byline h3 {
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: rgba(200, 0, 0, 0.5);
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.n-byline .authors-affiliations {
+    grid-column-end: span 2;
+    grid-template-columns: 1fr 1fr;
+
+}
+
+
+/*------------------------------------------------------------------*/
+
+
+/* figures */
+
+.figure {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+figcaption,
+.figcaption {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.5em;
+}
+
+ul.authors {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+ul.authors li {
+    padding: 0 0.5rem;
+    display: inline-block;
+}
+
+ul.authors sup {
+    color: rgb(126, 126, 126);
+}
+
+ul.authors.affiliations {
+    margin-top: 0.0rem;
+}
+
+ul.authors.affiliations li {
+    color: rgb(126, 126, 126);
+}
+
+.authors-affiliations-gap {
+    width: 100%;
+    margin-bottom: .4rem;
+}
+
+
+/* Download section columns.  This switches between two layouts::after
+    
+    - two columns on larger viewport sizes: side-by-side paper thumb and links
+    - single column: no thumb
+     */
+
+.download-section {
+    display: grid;
+    grid-template-areas: "links";
+}
+
+.download-thumb {
+    grid-area: thumb;
+    display: none;
+}
+
+.download-links {
+    grid-area: links;
+}
+
+.download-links > ul > li > a {
+    text-decoration: underline;
+    font-style: italic;
+}
+
+img.dropshadow {
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+    height: 90%;
+    width: auto;
+}
+
+@media(min-width: 1180px) {
+    .download-section {
+        display: grid;
+        grid-template-areas: "thumb links";
+    }
+    .download-thumb {
+        display: block;
+        height: 25rem;
+        margin-left: 1rem;
+    }
+}
+
+
+/* For BibTeX */
+
+pre {
+    font-size: 0.9em;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-radius: 3px;
+    background-color: rgb(235, 235, 235);
+    overflow-x: auto;
+}
+
+
+/* Custom */
+a {
+    color: steelblue;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: rgb(107, 145, 176);
+}
+
+h3 {
+    font-size: 1.35em;
+    margin-bottom: 0;
+    color: #246385;
+}
+
+p {
+    text-align: justify;
+}
+
+.video-desc{
+    text-align: center;
+    font-size: large;
+}
+
+#video-table{
+    max-width: 100%;
+}
+
+.footer .icon-link {
+    font-size: 25px;
+    color: #000;
+}
+
+.link-block a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+img {
+    border-radius: 10px;
+}
+
+.desc-text {
+    color: grey;
+}

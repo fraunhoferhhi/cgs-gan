@@ -1,0 +1,334 @@
+<html>
+<head>
+    <title>CGS-GAN</title>
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+    <link rel="stylesheet" href="./css/bulma.min.css">
+    <link rel="icon" href="./images/favicon.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat|Segoe+UI" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="./js/fontawesome.all.min.js"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-orbit-controls@1.3.2/dist/aframe-orbit-controls.min.js"></script>
+    <script src="https://quadjr.github.io/aframe-gaussian-splatting/index.js"></script>
+    <script>
+        AFRAME.registerComponent("focal-changer", {
+            init: function () {
+                this.el.addEventListener("loaded", () => { // wait until loaded
+                    const camera = this.el.camera; // grab the THREE.Perspective camera
+                    camera.setFocalLength(70); // change the focal lenght
+                })
+            }
+        })
+    </script>
+</head>
+
+<body>
+<!--HEADER-->
+<div class="n-title"   style="background: #EEE;">
+    <h1>
+        <span style="font-size: 70px; line-height: 1.2em; "><span style="color: #8b1010">C</span><span style="color: #131c85">G</span><span style="color: green">S</span>-GAN</span>
+        <br>
+        3D <span style="color: #8b1010">Consistent</span> <span style="color: #131c85">Gaussian</span> <span style="color: green">Splatting</span> GANs
+        <br>
+        for High Resolution Human Head Synthesis</h1>
+</div>
+<div class="n-byline">
+    <div class="byline">
+        <ul class="authors">
+            <li><a href="https://Florian-Barthel.github.io" target="_blank">Florian Barthel</a><sup>1, 2</sup>
+            </li>
+            <li>
+                <a href="https://www.hhi.fraunhofer.de/en/departments/vit/research-groups/computer-vision-graphics/team/morgenstern.html"
+                   target="_blank">Wieland Morgenstern</a><sup>2</sup>
+            </li>
+            <li>
+                <a href="" target="_blank">Paul Hinzer</a><sup>2</sup>
+            </li>
+            <li><a href="https://iphome.hhi.de/hilsmann/index.htm" target="_blank">Anna Hilsmann</a><sup>2</sup>
+            </li>
+            <li><a href="https://www.informatik.hu-berlin.de/de/forschung/gebiete/viscom/eisert"
+                   target="_blank">Peter Eisert</a><sup>1, 2</sup>
+            </li>
+        </ul>
+        <ul class="authors affiliations">
+            <li>
+                <sup>1</sup>
+                Humboldt University
+            </li>
+            <li>
+                <sup>2</sup>
+                Heinrich-Hertz Institut
+            </li>
+        </ul>
+        <div class="publication-links">
+            <ul class="authors affiliations">
+                <li>
+                    <span class="link-block">
+                        <a href="https://arxiv.org/abs/2505.17590" target="_blank"
+                           class="external-link button is-normal is-rounded is-dark is-disabled">
+                            <span class="icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </span>
+                            <span>Paper</span>
+                        </a>
+                    </span>
+                </li>
+                <li>
+                    <span class="link-block">
+                        <a href="https://github.com/fraunhoferhhi/cgs-gan" target="_blank"
+                           class="external-link button is-normal is-rounded is-dark">
+                            <span class="icon">
+                                <i class="fab fa-github"></i>
+                            </span>
+                            <span>Code</span>
+                        </a>
+                    </span>
+                </li>
+                <li>
+                    <span class="link-block">
+                        <a href="https://github.com/fraunhoferhhi/cgs-gan" target="_blank"
+                           class="external-link button is-normal is-rounded is-dark">
+                            <span class="icon">
+                                <i class="fab fa-github"></i>
+                            </span>
+                            <span>Dataset</span>
+                        </a>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+<!--CONTENT-->
+<div class="n-article">
+    <a style="text-align: center" href="images/out.jpg" target="_blank"><img src="images/out_small.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/></a>
+    <a style="text-align: center" href="images/out.jpg" target="_blank">Full Resolution</a>
+
+    <h2 id="abstract"> Abstract </h2>
+    <p>
+        Recently, 3D GANs based on 3D Gaussian splatting have been proposed for high quality synthesis of human heads. However, existing methods stabilize
+        training and enhance rendering quality from steep viewpoints by conditioning the random latent vector on the current camera position. This compromises
+        3D consistency, as we observe significant identity changes when re-synthesizing the 3D head with each camera shift. Conversely, fixing the camera to a
+        single viewpoint yields high-quality renderings for that perspective but results in poor performance for novel views. Removing view-conditioning
+        typically destabilizes GAN training, often causing the training to collapse. In response to these challenges, we introduce CGS-GAN, a novel 3D Gaussian
+        Splatting GAN framework that enables stable training and high-quality 3D-consistent synthesis of human heads without relying on view-conditioning. To
+        ensure training stability, we introduce a multi-view regularization technique that enhances generator convergence with minimal computational overhead.
+        Additionally, we adapt the conditional loss used in existing 3D Gaussian splatting GANs and propose a generator architecture designed to not only
+        stabilize training but also facilitate efficient rendering and straightforward scaling, enabling output resolutions up to 2048. To evaluate the
+        capabilities of CGS-GAN, we curate a new dataset derived from FFHQ. This dataset enables very high resolutions, focuses on larger portions of the human
+        head, reduces view-dependent artifacts for improved 3D consistency, and excludes images where subjects are obscured by hands or other objects. As a
+        result, our approach achieves very high rendering quality, supported by competitive FID scores, while ensuring consistent 3D scene generation.
+    </p>
+
+
+    <video controls style="border-radius: 10px;" autoplay muted>
+        <source src="videos/latent.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+
+    <h2> Method </h2>
+
+    <p>
+        <ul style="list-style-type:disc;">
+            <li>
+                Our proposed 3DGS GAN framework produces <b>consistent 3D scenes</b> without relying on view-conditioning.
+            </li>
+            <li>
+                We propose an <b>efficient</b> and <b>scalable</b> generator architecture, based on <a href="https://hse1032.github.io/gsgan">GSGAN</a>, that allows fast
+                synthesis speed and output resolutions of up to <b>2048<sup>2</sup></b>.
+            </li>
+            <li>
+                We introduce a <b>multi-view regularization</b> that stabilizes the training and enhances consistent 3D geometry.
+            </li>
+            <li>
+                Leveraging a background augmentation, we are able to remove <b>hole artifacts</b> during rendering.
+            </li>
+        </ul>
+    </p>
+    <img src="images/arch_2.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+
+    <h2> Interactive Examples </h2>
+    <p>
+        Example output scenes generated by our proposed CGS-GAN, using the <a href="https://github.com/quadjr/aframe-gaussian-splatting/tree/main">aframe-gaussian-splatting</a>
+        web viewer. <b>Drag</b> and <b>scroll</b> with your mouse. The 3D scenes slightly differ from the original scene, as they were converted from .ply files
+        into compressed .splat files.
+    </p>
+
+
+    <table style="margin: 0 auto">
+        <tr id="table-row">
+            <td id="scene-1">
+                <a-scene focal-changer class="aframebox" device-orientation-permission-ui="enabled: false"
+                         style="height: 500px; width: 500px;" embedded renderer="antialias: true">
+                    <a-entity
+
+                            gaussian_splatting="src: https://huggingface.co/anonym892312603527/neurips25/resolve/main/model_2.splat;"
+                            rotation="180 -30 0" position="0 0 -1.4"></a-entity>
+                    <a-entity camera look-controls="enabled: false"
+                              orbit-controls="target: 0 0 -1.4; minDistance: 0.5; maxDistance: 5; initialPosition: 0 0 0; rotateSpeed: 0.1"></a-entity>
+                </a-scene>
+            </td>
+        </tr>
+    </table>
+
+    <h2> Comparison </h2>
+    <p>
+        A visual comparison among current 3DGS GANs (<a href="https://tobias-kirschstein.github.io/gghead/">GGHead</a>,
+        <a href="https://hse1032.github.io/gsgan">GSGAN</a> and our proposed method). We condition GGHead and GSGAN on the frontal view, as this provides the
+        overall best results when a 3D consistent scene is required. Quantitative comparisons (FID and consistent FID<sub>3D</sub>) are found in our paper.
+    </p>
+
+    <img src="images/gghead.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+    <p style="text-align: center">GGHead (with frontal view-conditioning) trained on FFHQ</p>
+    <img src="images/gsgan.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+    <p style="text-align: center">GSGAN (with frontal view-conditioning) trained on FFHQ</p>
+    <img src="images/ours_ffhq.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+    <p style="text-align: center"><b>Ours</b> trained on FFHQ</p>
+    <img src="images/ours_ffhqc.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+    <p style="text-align: center"><b>Ours</b> trained on our proposed dataset FFHQC</p>
+
+    <h2> View Conditioning </h2>
+    <p>
+        In the following figure, we demonstrate the effect of view-conditioning using the prior 3DGS GAN methods GSGAN and GGHead. If the view conditioning aligns with
+        the render camera, we receive very good but inconsistent quality. But if render from a novel view, the quality decreases. As our model eliminates view-conditioning,
+        we no longer observe such effects and instead render in high quality for any given view. To measure this effect quantitatively, we introduce a FID<sub>3D</sub> metric
+        that measures the FID without telling the generator in advance from which viewpoint the head will be rendered.
+    </p>
+    <img src="images/view_cond_1.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+
+
+
+    <h2>FFHQC Dataset</h2>
+    <p>
+        We curate a novel dataset from FFHQ that:
+                <ul style="list-style-type:disc;">
+            <li>
+                allows rendering at high resolutions of up to <b>2048<sup>2</sup></b>,
+            </li>
+            <li>
+                crops a larger region of the head to allow for synthesis of <b>full heads</b>,
+            </li>
+            <li>
+                filters 15k images that show <b>occluded</b> faces,
+            </li>
+            <li>
+                and rebalances the data distribution to <b>reduce view-dependent effects</b> and improve the quality of <b>side views</b>.
+            </li>
+        </ul>
+
+    </p>
+    <img src="images/data_pipeline_2.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+
+    <h2> Latent Inversion </h2>
+    <p>
+        The following two videos demonstrate the 3D GAN inversion with our model. Here, we use the respective left image as a target and optimize the random latent vector,
+        so that it resembles this image. In the left video, we show the inversion capabilities using a face shown from a frontal view. And right, we <b>only use the side view</b>
+        as a target. Even in this difficult scenario, where only half of the face is visible, we are still able to obtain a realistic 3D head model.
+    </p>
+    <table>
+        <tr>
+            <td>
+                <video controls style="border-radius: 10px;">
+                    <source src="videos/inversion_2.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </td>
+            <td>
+                <video controls style="border-radius: 10px;">
+                    <source src="videos/inversion_1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </td>
+        </tr>
+    </table>
+    <p>
+        At one point in the video the face abruptly changes its appearance. This is where we switch from optimizing the latent vector to fine-tuning the weights
+        of the generator to achieve even better results.
+    </p>
+
+    <h2> Applications </h2>
+    <p>
+        Using the <a href="https://github.com/aras-p/UnityGaussianSplatting">Unity Gaussian Splatting Plugin</a>, we are able to import our 3D heads into explicit
+        3D environments.
+    </p>
+    <img src="images/unity.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
+
+
+    <h2>Future Work</h2>
+    <ul style="list-style-type:disc;">
+        <li>
+            We are eager to improve the quality of the training data even further. Our proposed FFHQC dataset has already shown promising improvements for quality and training convergence,
+            however, we still observe some rendering artifacts that are created by poor background masking. Guiding the masking network to only select the person in the center of the image
+            will likely boost the overall quality even further.
+        </li>
+
+        <li>
+            Furthermore, we want to integrate data showing the back of the head.
+        </li>
+
+        <li>
+            And lastly, we want to test more generator architectures that are even more efficient, leveraging fast CUDA implementations for attention layers.
+        </li>
+    </ul>
+
+
+
+<!--    <h2 id="acknowledgments"> Acknowledgments </h2>-->
+<!--    <p>-->
+<!--        This research has partly been funded by the German Research Foundation (3DIL, grant no. 502864329), the-->
+<!--        European Union's Horizon Europe research and innovation programme (Luminous, grant no. 101135724), and the-->
+<!--        German Ministry of Education and Research (MoDL, grant no. 01IS20044).-->
+<!--    </p>-->
+
+
+
+
+    <h2 id="citation"> Citation </h2>
+    <pre style="border-radius: 10px;"><code>
+</code></pre>
+    <p>
+    Check out our other works <a href="https://Florian-Barthel.github.io" target="_blank">here</a>.
+    </p>
+
+    <h2>References</h2>
+    <ul style="list-style-type:disc;">
+        <li>Gaussian web viewer: <a href="https://github.com/quadjr/aframe-gaussian-splatting/tree/main">github.com/quadjr/aframe-gaussian-splatting</a></li>
+        <li>Website Template taken from: <a href="https://nerfies.github.io">nerfies.github.io</a> and <a
+        href="https://nvlabs.github.io/eg3d/">nvlabs.github.io/eg3d</a>.</li>
+        <li>
+            <a href="https://github.com/aras-p/UnityGaussianSplatting">Unity Gaussian Splatting Plugin</a>
+        </li>
+        <li>
+            <a href="https://tobias-kirschstein.github.io/gghead/">GGHead</a>
+        </li>
+        <li>
+            <a href="https://hse1032.github.io/gsgan">GSGAN</a>
+        </li>
+    </ul>
+
+</div>
+</body>
+
+
+<script>
+    if (window.matchMedia('(min-width: 1100px)').matches) {
+        document.getElementById("table-row").innerHTML += `
+        <td id="scene-3" style="padding: 0">
+            <a-scene focal-changer className="aframebox" device-orientation-permission-ui="enabled: false"
+                     style="height: 500px; width: 500px;" renderer="antialias: true" embedded>
+                <a-entity
+                    gaussian_splatting="src: https://huggingface.co/anonym892312603527/neurips25/resolve/main/model_7.splat;"
+                    rotation="180 -30 0" position="0 0 -1.4"></a-entity>
+                <a-entity camera look-controls="enabled: false"
+                          orbit-controls="target: 0 0 -1.4; minDistance: 0.5; maxDistance: 5; initialPosition: 0 0 0; rotateSpeed: 0.1"></a-entity>
+            </a-scene>
+        </td>`
+    }
+</script>
+</html>
