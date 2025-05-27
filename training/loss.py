@@ -31,7 +31,7 @@ class Loss:
 
 
 class StyleGAN2Loss(Loss):
-    def __init__(self, device, G, D, r1_gamma=10, blur_init_sigma=0, blur_fade_kimg=0, r1_gamma_init=0, r1_gamma_fade_kimg=0, resolution=512, filter_mode='antialiased', loss_custom_options={}):
+    def __init__(self, device, G, D, r1_gamma=10, blur_init_sigma=0, blur_fade_kimg=0, r1_gamma_init=0, r1_gamma_fade_kimg=0, resolution=512, loss_custom_options={}):
         super().__init__()
         self.device             = device
         self.G                  = G
@@ -42,7 +42,6 @@ class StyleGAN2Loss(Loss):
         self.r1_gamma_init      = r1_gamma_init
         self.r1_gamma_fade_kimg = r1_gamma_fade_kimg
         self.resolution = resolution
-        self.filter_mode = filter_mode
         self.resample_filter = upfirdn2d.setup_filter([1,3,3,1], device=device)
 
         self.coeffs = loss_custom_options

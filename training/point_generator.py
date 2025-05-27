@@ -34,9 +34,7 @@ class LinLinear(nn.Module):
 
 @persistence.persistent_class
 class SinActivation(nn.Module):
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         super().__init__()
 
     def forward(self, x):
@@ -45,10 +43,7 @@ class SinActivation(nn.Module):
 
 @persistence.persistent_class
 class LFF(nn.Module):
-    def __init__(
-        self,
-        hidden_size,
-    ):
+    def __init__(self, hidden_size):
         super().__init__()
         self.ffm = LinLinear(3, hidden_size, is_first=True)
         self.activation = SinActivation()
@@ -65,8 +60,6 @@ class constant_PE(nn.Module):
         super().__init__()
 
         self.pe_dim = pe_dim
-
-        # constant PE
         self.const_pe = torch.nn.Parameter(torch.randn([3, pe_dim, 1, pe_res]))
 
     def forward(self, pos):
@@ -207,6 +200,8 @@ class PointGenerator(nn.Module):
         self.upsample_ratio_accum = [1, 4, 16, 64, 128, 256, 512, 1024]
 
         def get_features(layer, upsample_ratio):
+            if layer == 7:
+                return 8
             return max(16, 512 // 2 ** layer)
 
 
@@ -274,7 +269,7 @@ class PointGenerator(nn.Module):
 
         prev_anchors = EasyDict(
             xyz=0,
-            scale=torch.tensor(-5., device=x.device),
+            scale=torch.tensor(-7., device=x.device),
             rotation=self.rotation_init,
             color=self.color_init,
             opacity=self.opacity_init,
@@ -351,8 +346,6 @@ class PointGenerator(nn.Module):
             xyz_new = torch.tanh(gaussian.xyz)
             R_anchor = get_scaled_directional_vector_from_quaternion(prev_anchor.rotation, prev_anchor.scale)  # [B, num_points * N, 3, 3]
             xyz_new = (R_anchor @ xyz_new.unsqueeze(-1)).squeeze(-1) + prev_anchor.xyz  # [B, num_points * N, 3]
-            # scale_new = prev_anchor.scale - torch.nn.functional.softplus(-gaussian.scale)
-            # scale_new = torch.clamp(scale_new, -8, 0)
 
             scale_split = torch.log(torch.exp(prev_anchor.scale) / self.split_ratio)
             scale_split = torch.clamp(scale_split, -1e2, 0) # remove -inf
@@ -361,7 +354,6 @@ class PointGenerator(nn.Module):
             scale = prev_anchor.scale * (1.0 - split_idx) + scale_split * split_idx
             scale_new = scale - torch.nn.functional.softplus(-gaussian.scale)
 
-        # scale_new[:, : , -1] -= 3 # flat gaussians
         new_gaussian = EasyDict(
             xyz=xyz_new,
             scale=torch.tanh(scale_new * 0.05) * 20,

@@ -8,7 +8,7 @@ import shutil
 
 import dnnlib
 from training import training_loop
-from torch_utils import custom_ops
+from torch_utils import custom_ops, training_stats
 
 
 def subprocess_fn(rank, c, temp_dir):
@@ -23,9 +23,11 @@ def subprocess_fn(rank, c, temp_dir):
         init_method = f'file://{init_file}'
         torch.distributed.init_process_group(backend='nccl', init_method=init_method, rank=rank, world_size=c.num_gpus)
 
+    sync_device = torch.device('cuda', rank) if c.num_gpus > 1 else None
     # Init torch_utils.
     torch.cuda.set_device(rank)
     torch.cuda.empty_cache()
+    training_stats.init_multiprocessing(rank=rank, sync_device=sync_device)
     if rank != 0:
         custom_ops.verbosity = 'none'
 

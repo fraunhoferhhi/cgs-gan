@@ -56,7 +56,6 @@ from train_helper import init_dataset_kwargs, launch_training, parse_comma_separ
 @click.option("--workers",          help="DataLoader worker processes",             type=int,   default=3)
 @click.option("--blur_fade_kimg",   help="Blur over how many",                      type=int,   default=200)
 @click.option("--disc_c_noise",     help="Strength of disc pose cond reg, in std.", type=float, default=0)
-@click.option("--resume_blur",      help="Enable to blur even on resume",           type=bool,  default=False)
 @click.option("--g_num_fp16_res",   help="Number of fp16 layers in generator",      type=int,   default=0)
 @click.option("--d_num_fp16_res",   help="Number of fp16 layers in discriminator",  type=int,   default=4)
 # Gaussian Splatting Config
@@ -73,6 +72,7 @@ from train_helper import init_dataset_kwargs, launch_training, parse_comma_separ
 # Resume Training
 @click.option("--resume",           help="Resume from given network pickle",        type=str)
 @click.option("--resume_kimg",      help="Resume k images",                         type=int)
+@click.option("--resume_blur",      help="Enable to blur even on resume",           type=bool,  default=False)
 def main(**kwargs):
     opts = dnnlib.EasyDict(kwargs)
     c = dnnlib.EasyDict()
