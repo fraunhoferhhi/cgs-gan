@@ -158,7 +158,7 @@
 
     <h2> Interactive Latent Viewer </h2>
     <p>Explore the latent space using the web viewer from <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/">PlayCanvas</a>
-    paired with <a href="https://github.com/fraunhoferhhi/Self-Organizing-Gaussians"> SOG Compression</a>.</p>
+    paired with <a href="https://fraunhoferhhi.github.io/Self-Organizing-Gaussians/"> SOG Compression</a>.</p>
     <iframe
           src="./viewer/index.html"
           width="100%"
@@ -200,7 +200,7 @@
         overall best results when a 3D consistent scene is required. Quantitative comparisons (FID and consistent FID<sub>3D</sub>) are found in our paper.
     </p>
 
-    <table style="table-layout: fixed">
+    <table style="table-layout: fixed; width:100%;">
         <tr style="text-align: center">
             <td>
                 GSGAN (FFHQ)
@@ -208,33 +208,24 @@
             <td>
                 GGHead (FFHQ)
             </td>
-<!--            <td>-->
-<!--                Ours (FFHQ)-->
-<!--            </td>-->
             <td>
-                Ours (FFHQC)
+                <b>Ours (FFHQC)</b>
             </td>
         </tr>
         <tr>
-            <td width="(100/3)%">
+            <td>
                 <video controls style="border-radius: 10px;" autoplay loop muted>
                     <source src="videos/compare/gsgan_ffhq.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </td>
-            <td width="(100/3)%">
+            <td>
                 <video controls style="border-radius: 10px;" autoplay loop muted>
                     <source src="videos/compare/gghead_ffhq.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </td>
-<!--            <td>-->
-<!--                <video controls style="border-radius: 10px;" autoplay loop muted>-->
-<!--                    <source src="videos/compare/ours_ffhq.mp4" type="video/mp4">-->
-<!--                    Your browser does not support the video tag.-->
-<!--                </video>-->
-<!--            </td>-->
-            <td width="(100/3)%">
+            <td>
                 <video controls style="border-radius: 10px;" autoplay loop muted>
                     <source src="videos/compare/ours_ffhqc.mp4" type="video/mp4">
                     Your browser does not support the video tag.
@@ -243,15 +234,6 @@
         </tr>
 
     </table>
-
-<!--    <img src="images/gghead.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
-<!--    <p style="text-align: center">GGHead (with frontal view-conditioning) trained on FFHQ</p>-->
-<!--    <img src="images/gsgan.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
-<!--    <p style="text-align: center">GSGAN (with frontal view-conditioning) trained on FFHQ</p>-->
-<!--    <img src="images/ours_ffhq.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
-<!--    <p style="text-align: center"><b>Ours</b> trained on FFHQ</p>-->
-<!--    <img src="images/ours_ffhqc.jpg" style="width: 100%; margin-left: auto; margin-right: auto;"/>-->
-<!--    <p style="text-align: center"><b>Ours</b> trained on our proposed dataset FFHQC</p>-->
 
     <h2> View Conditioning </h2>
     <p>
@@ -387,7 +369,7 @@
             <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/">PlayCanvas</a>
         </li>
         <li>
-            <a href="https://github.com/fraunhoferhhi/Self-Organizing-Gaussians"> SOG Compression</a>
+            <a href="https://fraunhoferhhi.github.io/Self-Organizing-Gaussians/"> SOG Compression</a>
         </li>
         <li>
             <a href="https://github.com/Florian-Barthel/splatviz">splatviz</a>
