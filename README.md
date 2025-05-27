@@ -1,6 +1,6 @@
 # CGS GAN
 
-This repository is the official implementation of [CGS-GAN 3D Consistent Gaussian Splatting GANs for High Resolution Human Head Synthesis](). 
+This repository is the official implementation of [CGS-GAN 3D Consistent Gaussian Splatting GANs for High Resolution Human Head Synthesis](https://arxiv.org/pdf/2505.17590). 
 
 ![alt text](assets/out_small.jpg "Teaser")
 
