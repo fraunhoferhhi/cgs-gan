@@ -73,6 +73,8 @@ python calc_metrics.py --network path/to/network.pkl --data data/FFHQC/512 --met
 You can download the FFHQC dataset here:
 - [FFHQC](https://huggingface.co/anonym892312603527/neurips25/resolve/main/FFHQC.tar?download=true)
 
+This will download the entire FFHQ dataset with the new cropping and in high resolutions. The dataset filtering happens in this [json file](https://github.com/fraunhoferhhi/cgs-gan/blob/main/custom_dist/smile_pose_rebalancing.json), which tells the training which image should be used during training. Some of the indices in the json file appear multiple times. This is because of our smile and pose rebalancing strategy that reduces view-dependend artifacts and improves the quality for steep viewing angles. 
+
 ## Pre-trained Models
 
 You can download our pretrained models here:
