@@ -28,7 +28,6 @@ from train_helper import init_dataset_kwargs, launch_training, parse_comma_separ
 @click.command()
 # Required.
 @click.option("--data",             help="Training data",                           type=str,   required=True)
-
 # Optional features.
 @click.option("--cam_sample_mode",  help="found in custom dist",                    type=str,   default="smile_pose_rebalancing")
 @click.option("--outdir",           help="Where to save the results",               type=str,   default="./training-results")
@@ -65,7 +64,7 @@ from train_helper import init_dataset_kwargs, launch_training, parse_comma_separ
 @click.option("--start_pe",         help="Positional encoding",                     type=bool,  default=True)
 @click.option("--center_dists",     help="coeff of center dist.",                   type=float, default=1.0)
 @click.option("--knn_dists",        help="loss scale for knn dists.",               type=float, default=20.0)
-@click.option("--knn_num_ks",       help="loss scale for knn dists.",               type=int,   default=20.0)
+@click.option("--knn_num_ks",       help="number of cluster center.",               type=int,   default=64)
 @click.option("--use_multivew_reg", help="compute grad for multiple views",         type=bool,  default=True)
 @click.option("--num_multiview",    help="number of renderings per training step",  type=int,   default=4)
 # Optional job description
@@ -142,14 +141,10 @@ def main(**kwargs):
             "scale_init": np.log((1 / np.sqrt(opts.gaussian_num_pts)) * 0.5),
             "scale_threshold": np.log((1 / np.sqrt(opts.gaussian_num_pts)) * 0.5),
             "scale_end": np.log((1 / c.training_set_kwargs.resolution) * 0.5),
-            "scale_init_bg": np.log(np.exp(-2) * 0.5),
-            "scale_threshold_bg": np.log(np.exp(-2) * 0.5),
-            "scale_upsample_reg": 0,
-            "xyz_output_scale": 0.1,            # Additional scale for coarsest xyz
-            "res_end": c.training_set_kwargs.resolution // 4,    # Actual upsampling is performed by log2(res_end / 4) times
-            "up_ratio": 4,                      # Upsample ratio
-            "num_pts": opts.gaussian_num_pts,   # Number of initial gaussians
-            "use_start_pe": opts.start_pe,      # Use positional encoding on learnable constant
+            "xyz_output_scale": 0.1,                            # Additional scale for coarsest xyz
+            "res_end": c.training_set_kwargs.resolution // 4,
+            "num_pts": opts.gaussian_num_pts,                   # Number of initial gaussians
+            "use_start_pe": opts.start_pe,                      # Use positional encoding on learnable constant
             "n_transformer": n_transformer_mapping[c.training_set_kwargs.resolution]
         }
     }
@@ -159,7 +154,7 @@ def main(**kwargs):
     c.loss_kwargs.r1_gamma = opts.gamma
     c.loss_kwargs.loss_custom_options = {
         "knn_dists": opts.knn_dists,                    # coeff. of KNN distance
-        "knn_num_ks": 64,                               # the number of KNN for calculating loss
+        "knn_num_ks": opts.knn_num_ks,                  # the number of KNN for calculating loss
         "center_dists": opts.center_dists,              # coeff. of center distance
         "is_resume": True if opts.resume is not None else False,
         "use_multivew_reg": opts.use_multivew_reg,

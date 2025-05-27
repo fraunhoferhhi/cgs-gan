@@ -340,7 +340,7 @@ def training_loop(
 
         # Save image snapshot.
         if (rank == 0) and (done or cur_tick % image_snapshot_ticks == 0):
-            out = [G_ema(z=z, c=c, noise_mode='const')["image"] for z, c in zip(grid_z, grid_c)]
+            out = [G_ema(z=z, c=c, noise_mode='const', random_bg=False)["image"] for z, c in zip(grid_z, grid_c)]
             images = torch.cat(out).cpu().detach().numpy()
             torch.cuda.empty_cache()
             save_image_grid(
