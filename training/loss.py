@@ -179,30 +179,20 @@ class StyleGAN2Loss(Loss):
                 clip_grad_norm_(self.D.parameters(), max_norm=5)
               
 
-def knn_distance(pos, k, num=-1, idx=None, return_idx=False):
-    """
-    Args:
-        pos: position point cloud [B, N, 3]
-        k: kNN neighbours
-    Return:
-        [B, 2dims, N, k]    
-    """
+def knn_distance(pos, k):
     x = pos.permute(0, 2, 1)
     B, dims, N = x.shape
 
-    # batched pair-wise distance
-    if idx is None:
-        xt = x.permute(0, 2, 1)
-        xi = -2 * torch.bmm(xt, x)
-        xs = torch.sum(xt**2, dim=2, keepdim=True)
-        xst = xs.permute(0, 2, 1)
-        dist = xi + xs + xst # [B, N, N]
+    xt = x.permute(0, 2, 1)
+    xi = -2 * torch.bmm(xt, x)
+    xs = torch.sum(xt**2, dim=2, keepdim=True)
+    xst = xs.permute(0, 2, 1)
+    dist = xi + xs + xst # [B, N, N]
 
-        # get k NN id
-        _, idx_o = torch.sort(dist, dim=2)
-        idx = idx_o[: ,: ,1:k+1] # [B, N, k]
-        idx = idx.contiguous().view(B, N*k)
-
+    # get k NN id
+    _, idx_o = torch.sort(dist, dim=2)
+    idx = idx_o[: ,: ,1:k+1] # [B, N, k]
+    idx = idx.contiguous().view(B, N*k)
 
     # gather
     neighbors = []
