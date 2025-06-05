@@ -123,3 +123,16 @@ Visualize our results using https://github.com/Florian-Barthel/splatviz
 | GGHead           | 7.90      | 7.78      | 14.27      | /          |
 | Ours             | **4.94**  | **4.53**  | **5.25**   | **7.8**    |
 
+## Citation
+Please cite our paper when using CGS-GAN in your work.
+```
+@misc{barthel2025cgsgan,
+      title={CGS-GAN: 3D Consistent Gaussian Splatting GANs for High Resolution Human Head Synthesis},
+      author={Florian Barthel and Wieland Morgenstern and Paul Hinzer and Anna Hilsmann and Peter Eisert},
+      year={2025},
+      eprint={2505.17590},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2505.17590},
+}
+```
