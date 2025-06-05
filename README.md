@@ -97,7 +97,7 @@ python generate_samples.py --pkl path/to/network.pkl
 
 Optional parameters are:
 - `--truncation_psi = 0.8` _tradeoff between quality and variety (0: quality and 1: variety)_
-- `--num_ids=6` _number of ids to generate (number of rows)_
+- `--num_ids = 6` _number of ids to generate (number of rows)_
 - `--radius = 2.7`   _radius of the camera_
 - `--seed = 42`
 - `--save_dir="results`
@@ -123,3 +123,16 @@ Visualize our results using https://github.com/Florian-Barthel/splatviz
 | GGHead           | 7.90      | 7.78      | 14.27      | /          |
 | Ours             | **4.94**  | **4.53**  | **5.25**   | **7.8**    |
 
+## Citation
+Please cite our paper when using CGS-GAN in your work.
+```
+@misc{barthel2025cgsgan,
+      title={CGS-GAN: 3D Consistent Gaussian Splatting GANs for High Resolution Human Head Synthesis},
+      author={Florian Barthel and Wieland Morgenstern and Paul Hinzer and Anna Hilsmann and Peter Eisert},
+      year={2025},
+      eprint={2505.17590},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2505.17590},
+}
+```
