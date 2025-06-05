@@ -46,7 +46,6 @@ class CGSGenerator(torch.nn.Module):
         self.renderer_gaussian3d = Renderer(sh_degree=0)
         self.mapping_network = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.point_gen.num_ws + 1, **mapping_kwargs)
 
-
     def mapping(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False):
         return self.mapping_network(z, torch.zeros_like(c), truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas)
 

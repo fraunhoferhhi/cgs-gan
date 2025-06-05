@@ -46,16 +46,16 @@ python train.py --data=path/FFHQ/512  --cam_sample_mode=ffhq_default
 ```
 
 Further optional parameters are:
-- `--gamma = 1.0` (R1 regularization weight)
-- `--gpus = 4` (training with multiple GPUs)
-- `--batch_gpu = 8` (split the training batchsize of 32 into smaller batches >=4)
-- `--use_multivew_reg = True` (activate / deactivate multiview regularization)
-- `--num_multiview = 4` (number of views per multiview regularization step)
-- `--desc = new_experiment` (name your run so that you find it in wandb)
+- `--gamma = 1.0` _R1 regularization weight_
+- `--gpus = 4` _training with multiple GPUs_
+- `--batch_gpu = 8` _split the training batchsize of 32 into smaller batches >=4_
+- `--use_multivew_reg = True` _activate / deactivate multiview regularization_
+- `--num_multiview = 4` _number of views per multiview regularization step_
+- `--desc = new_experiment` _name your run so that you find it in wandb_
 
 Load Checkpoint:
-- `--resume = path/to/network.pkl` (resume the training from a network checkpoint)
-- `--resume_kimg = 5000` (continue counting from the loaded checkpoint)
+- `--resume = path/to/network.pkl` _resume the training from a network checkpoint_
+- `--resume_kimg = 5000` _continue counting from the loaded checkpoint_
 
 ## Evaluation
 
@@ -87,6 +87,20 @@ FFHQC
 Vanilla FFHQ
 - [ffhq_512.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhq_512.pkl?download=true)
 
+
+## Run Inference
+Render results and save .ply files as follows:
+
+```shell
+python generate_samples.py --pkl path/to/network.pkl 
+```
+
+Optional parameters are:
+- `--truncation_psi = 0.8` _tradeoff between quality and variety (0: quality and 1: variety)_
+- `--num_ids=6` _number of ids to generate (number of rows)_
+- `--radius = 2.7`   _radius of the camera_
+- `--seed = 42`
+- `--save_dir="results`
 
 ## Visualize
 
