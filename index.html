@@ -156,15 +156,17 @@
     </p>
     <img src="images/arch_2.png" style="width: 100%; margin-left: auto; margin-right: auto;"/>
 
-    <h2> Interactive Latent Viewer </h2>
-    <p>Explore the latent space using the web viewer from <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/">PlayCanvas</a>
-    paired with <a href="https://fraunhoferhhi.github.io/Self-Organizing-Gaussians/"> SOG Compression</a>.</p>
+    <h2>Interactive Latent Viewer</h2>
+    <p>
+      Explore the latent space using the web viewer from
+      <a href="https://blog.playcanvas.com/playcanvas-adopts-sogs-for-20x-3dgs-compression/"> PlayCanvas</a> paired with
+      <a href="https://fraunhoferhhi.github.io/Self-Organizing-Gaussians/"> SOG Compression</a>.
+    </p>
+
     <iframe
-          src="./viewer/index.html"
-          width="100%"
-          height="600"
-          style="border:0; border-radius: 10px;"
-          loading="lazy">
+      class="latent-viewer"
+      src="./viewer/index.html"
+      loading="lazy">
     </iframe>
 
 
@@ -395,4 +397,18 @@
         </td>`
     }
 </script>
+<style>
+.latent-viewer {
+    width: 100%;
+    height: 600px;
+    border: 0;
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .latent-viewer {
+        height: min(90vh, 1200px);
+    }
+}
+</style>
 </html>
