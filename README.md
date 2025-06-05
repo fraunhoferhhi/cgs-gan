@@ -97,7 +97,7 @@ python generate_samples.py --pkl path/to/network.pkl
 
 Optional parameters are:
 - `--truncation_psi = 0.8` _tradeoff between quality and variety (0: quality and 1: variety)_
-- `--num_ids=6` _number of ids to generate (number of rows)_
+- `--num_ids = 6` _number of ids to generate (number of rows)_
 - `--radius = 2.7`   _radius of the camera_
 - `--seed = 42`
 - `--save_dir="results`
