@@ -57,13 +57,15 @@ def training_loop(
     conv2d_gradfix.enabled = True  # Improves training speed.
     grid_sample_gradfix.enabled = False  # Avoids errors with the augmentation pipe.
 
+
     # Load training set.
     if rank == 0:
         print('Loading training set...')
     training_set = dnnlib.util.construct_class_by_name(**training_set_kwargs)  # subclass of training.dataset.Dataset
     training_set_sampler = misc.InfiniteSampler(dataset=training_set, rank=rank, num_replicas=num_gpus, seed=random_seed)
-    training_set_iterator = iter(
-        torch.utils.data.DataLoader(dataset=training_set, sampler=training_set_sampler, batch_size=batch_size // num_gpus, **data_loader_kwargs))
+    training_set_iterator = iter(torch.utils.data.DataLoader(dataset=training_set, sampler=training_set_sampler, batch_size=batch_size // num_gpus, **data_loader_kwargs))
+    eval_training_set = dict(training_set_kwargs)
+    eval_training_set["rand_background"] = False
     if rank == 0:
         print()
         print('Num images: ', len(training_set))
@@ -377,7 +379,7 @@ def training_loop(
                 print(run_dir)
                 print('Evaluating metrics...')
             for metric in metrics:
-                result_dict = metric_main.calc_metric(metric=metric, G=G_ema, dataset_kwargs=training_set_kwargs, num_gpus=num_gpus, rank=rank, device=device)
+                result_dict = metric_main.calc_metric(metric=metric, G=G_ema, dataset_kwargs=eval_training_set, num_gpus=num_gpus, rank=rank, device=device)
                 if rank == 0:
                     metric_main.report_metric(result_dict, run_dir=run_dir)
                 stats_metrics.update(result_dict.results)
