@@ -2,6 +2,7 @@ import os
 import pickle
 import click
 import torch
+from tqdm import tqdm
 
 from dnnlib import EasyDict
 from inference_helper import Logger
@@ -19,9 +20,9 @@ class ViewpointGrid:
         self.w = self.mapper.map_to_w(self.z)
 
     def save_images(self):
-        poses = [self.mapper.get_cam(angles) for angles in self.settings.head_angles]
         image = []
-        for cam in poses:
+        for angles in tqdm(self.settings.head_angles, desc="Generating images"):
+            cam = self.mapper.get_cam(angles)
             generated_tensor = self.generator(self.w, cam.repeat((self.settings.num_ids, 1)), random_bg=False)["image"]
             generated_tensor = torch.cat(generated_tensor.split(1), dim=2)
             image.append(generated_tensor)
@@ -29,8 +30,10 @@ class ViewpointGrid:
         self.logger.save_image(image, f"grid_seed_{self.settings.seed}")
 
     def save_ply(self):
-        gs_scene = EasyDict(self.generator(self.w[0:1], torch.zeros(1, 25).to(self.settings.device), render_output=False)["gaussian_params"][0])
-        save_ply(gs_scene, os.path.join(self.logger.save_path, f"out_seed_{self.settings.seed}.ply"))
+        gs_scenes = self.generator(self.w, torch.zeros(self.w.shape[0], 25).to(self.settings.device), render_output=False)["gaussian_params"]
+        for i in tqdm(range(self.settings.num_ids), desc="Generating ply"):
+            gs_scene = EasyDict(gs_scenes[i])
+            save_ply(gs_scene, os.path.join(self.logger.save_path, f"out_seed_{self.settings.seed}_index_{i}.ply"))
 
 
 @click.command()
