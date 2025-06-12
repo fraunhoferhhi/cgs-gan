@@ -269,7 +269,7 @@ class PointGenerator(nn.Module):
 
         prev_anchors = EasyDict(
             xyz=0,
-            scale=torch.tensor(-7., device=x.device),
+            scale=torch.tensor(-5., device=x.device),
             rotation=self.rotation_init,
             color=self.color_init,
             opacity=self.opacity_init,
