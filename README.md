@@ -80,12 +80,12 @@ This will download the entire FFHQ dataset with the new cropping and in high res
 You can download our pretrained models here:
 
 FFHQC
-- [ffhq_512.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhq_512.pkl?download=true)
-- [ffhq_1024.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhqc_1024.pkl?download=true)
-- [ffhq_2048.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhqc_2048.pkl?download=true)
+- [ffhq_512.pkl](https://huggingface.co/Fubei/cgs_gan_checkpoints/resolve/main/ffhqc_512.pkl?download=true)
+- [ffhq_1024.pkl](https://huggingface.co/Fubei/cgs_gan_checkpoints/resolve/main/ffhqc_1024.pkl?download=true)
+- [ffhq_2048.pkl](https://huggingface.co/Fubei/cgs_gan_checkpoints/resolve/main/ffhqc_2048.pkl?download=true)
 
 Vanilla FFHQ
-- [ffhq_512.pkl](https://huggingface.co/anonym892312603527/neurips25/resolve/main/models/ffhq_512.pkl?download=true)
+- [ffhq_512.pkl](https://huggingface.co/Fubei/cgs_gan_checkpoints/resolve/main/ffhq_512.pkl?download=true)
 
 
 ## Run Inference
