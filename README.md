@@ -6,6 +6,12 @@ This repository is the official implementation of [CGS-GAN 3D Consistent Gaussia
 
 ## Requirements
 
+Clone the repository. Use the single branch tag to avoid loading the large project page:
+
+```sh
+git clone https://github.com/fraunhoferhhi/cgs-gan.git --single-branch
+```
+
 Install the conda environment and load the Gaussian splatting renderer:
 
 Change the line `pytorch-cuda=11.8` in environment.yml to the installed cuda version on your machine. Otherwise diff-gaussian-rasterization fails to install. 
