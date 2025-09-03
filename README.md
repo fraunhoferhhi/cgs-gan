@@ -81,6 +81,12 @@ You can download the FFHQC dataset here:
 
 This will download the entire FFHQ dataset with the new cropping and in high resolutions. The dataset filtering happens in this [json file](https://github.com/fraunhoferhhi/cgs-gan/blob/main/custom_dist/smile_pose_rebalancing.json), which tells the training which image should be used during training. Some of the indices in the json file appear multiple times. This is because of our smile and pose rebalancing strategy that reduces view-dependend artifacts and improves the quality for steep viewing angles. 
 
+## Data Preprocessing
+
+Our data preprocessing uses [Insightface](https://github.com/deepinsight/insightface) for keypoint detection, [3DDFA_v2](https://github.com/cleardusk/3DDFA_V2) 3D for camera estimation and [MODNet](https://github.com/ZHKKKe/MODNet) for background masking.
+
+The full pipeline can be found here: [https://github.com/Florian-Barthel/gan_preprocessing](https://github.com/Florian-Barthel/gan_preprocessing/tree/master).
+
 ## Pre-trained Models
 
 You can download our pretrained models here:
