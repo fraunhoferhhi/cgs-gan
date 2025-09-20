@@ -4,6 +4,8 @@ This repository is the official implementation of [CGS-GAN 3D Consistent Gaussia
 
 ![alt text](assets/out_small.jpg "Teaser")
 
+<div align="center"><b>Accepted at NeurIPS 2025! 🎉</b></div>
+
 ## Requirements
 
 Clone the repository. Use the single branch tag to avoid loading the large project page:
