@@ -141,7 +141,11 @@ def get_plugin(module_name, sources, headers=None, source_dir=None, **build_kwar
             torch.utils.cpp_extension.load(name=module_name, verbose=verbose_build, sources=sources, **build_kwargs)
 
         # Load.
+        import sys
+        if cached_build_dir not in sys.path:
+            sys.path.insert(0, cached_build_dir)
         module = importlib.import_module(module_name)
+
 
     except:
         if verbosity == 'brief':
