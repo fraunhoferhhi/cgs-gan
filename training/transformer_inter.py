@@ -136,33 +136,34 @@ class Transformer(nn.Module):
         super().__init__()
         self.width = width
         self.layers = layers
-        self.resblocks = nn.ModuleList([
-            ResidualAttentionBlock(
-                width=width,
-                heads=heads,
-                w_dim=w_dim
-            )
-            for i in range(layers - 1)
-        ])
-
+        self.num_first_layers = num_first_layers
         self.first_layers = nn.ModuleList([
             ResidualAttentionBlock(
                 width=width,
                 heads=heads,
                 w_dim=w_dim
             )
-            for i in range(num_first_layers)
+            for _ in range(num_first_layers)
         ])
-        self.num_first_layers = num_first_layers
+        self.resblocks = nn.ModuleList([
+            ResidualAttentionBlock(
+                width=width,
+                heads=heads,
+                w_dim=w_dim
+            )
+            for _ in range(layers - 1)
+        ])
+
+        self.num_ws = len(self.resblocks) + len(self.first_layers)
 
     def forward(self, x: torch.Tensor, ws: torch.Tensor):
         results = []
 
         for i in range(self.num_first_layers):
-            x = self.first_layers[i](x, ws)
+            x = self.first_layers[i](x, ws[:, i:i+1, :])
         results.append(x)
 
         for i in range(len(self.resblocks)):
-            x = self.resblocks[i](x, ws)
+            x = self.resblocks[i](x, ws[:, i + self.num_first_layers: i + self.num_first_layers + 1, :])
             results.append(x)
         return results

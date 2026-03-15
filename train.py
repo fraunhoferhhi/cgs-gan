@@ -49,8 +49,8 @@ from train_helper import init_dataset_kwargs, launch_training, parse_comma_separ
 @click.option("--metrics",          help="Quality metrics",                         type=parse_comma_separated_list, default="fid20k_full")
 @click.option("--kimg",             help="Total training duration",                 type=int,   default=15000)
 @click.option("--tick",             help="How often to print progress",             type=int,   default=1)
-@click.option("--img_snap",         help="How often to save snapshots",             type=int,   default=50)
-@click.option("--network_snap",     help="How often to save network pkl",           type=int,   default=500)
+@click.option("--img_snap",         help="How often to save snapshots",             type=int,   default=20)
+@click.option("--network_snap",     help="How often to save network pkl",           type=int,   default=200)
 @click.option("--seed",             help="Random seed",                             type=int,   default=0)
 @click.option("--nobench",          help="Disable cuDNN benchmarking",              type=bool,  default=False)
 @click.option("--workers",          help="DataLoader worker processes",             type=int,   default=3)
@@ -95,9 +95,9 @@ def main(**kwargs):
     c.D_kwargs.disc_c_noise = opts.disc_c_noise
 
     # Optimizer
-    c.G_opt_kwargs = dnnlib.EasyDict(class_name="torch.optim.Adam", betas=[0, 0.99], eps=1e-8)
+    c.G_opt_kwargs = dnnlib.EasyDict(class_name="torch.optim.Adam", betas=[0.0, 0.99], eps=1e-8)
     c.G_opt_kwargs.lr = opts.glr
-    c.D_opt_kwargs = dnnlib.EasyDict(class_name="torch.optim.Adam", betas=[0, 0.99], eps=1e-8)
+    c.D_opt_kwargs = dnnlib.EasyDict(class_name="torch.optim.Adam", betas=[0.0, 0.99], eps=1e-8)
     c.D_opt_kwargs.lr = opts.dlr
 
     # Training Data

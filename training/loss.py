@@ -46,10 +46,11 @@ class StyleGAN2Loss(Loss):
 
         self.coeffs = loss_custom_options
         self.renderer_gaussian3d = Renderer(sh_degree=0)
+        self.running_score_fake = torch.tensor(0, device=self.device)
+        self.running_score_real = torch.tensor(0, device=self.device)
 
     def run_G(self, z, c, resolution, update_emas=False, render_output=True):
-        c_gen_conditioning = torch.zeros_like(c)
-        ws = self.G.mapping(z, c_gen_conditioning, update_emas=update_emas)
+        ws = self.G.mapping(z, c, update_emas=update_emas)
         gen_output = self.G.synthesis(ws, c, resolution=resolution, update_emas=update_emas, render_output=render_output)
         return gen_output, ws
 
@@ -60,6 +61,8 @@ class StyleGAN2Loss(Loss):
                 f = torch.arange(-blur_size, blur_size + 1, device=img['image'].device).div(blur_sigma).square().neg().exp2()
                 img['image'] = upfirdn2d.filter2d(img['image'], f / f.sum())
         logits = self.D(img, c, update_emas=update_emas)
+        if isinstance(logits, dict):
+            logits = logits["combined"]
         return logits
 
     def accumulate_gradients(self, phase, real_img, real_c, gen_z, gen_c, gain, cur_nimg, logger: CustomLogger):
@@ -83,23 +86,18 @@ class StyleGAN2Loss(Loss):
                     num_opt_steps = self.coeffs["num_multiview"]
                     fov = focal2fov(gen_c[0, 20])
                     loss_Gmain = 0
+                    # dynamic_opt_steps = min(16, max(1, int(np.round(self.running_score_real.cpu().detach().item() - self.running_score_fake.cpu().detach().item()))))
                     for i in range(num_opt_steps):
                         batch_renderings = []
                         batch_cams = []
                         gen_c = torch.roll(gen_c, 1, dims=0)
                         for batch_idx, current_scene in enumerate(gen_result["gaussian_params"]):
                             extrinsic = gen_c[batch_idx, :16].reshape(4, 4)
-                            intrinsics = torch.tensor([
-                                gen_c[0, 16], 0.0,    0.5,
-                                0.0,    gen_c[0, 20], 0.5,
-                                0.0,    0.0,    1.0
-                            ], device="cuda")
-
                             render_cam = CustomCam(self.resolution, self.resolution, fovy=fov, fovx=fov, extr=extrinsic)
                             bg = torch.rand(3, device=gen_z.device)
                             ret_dict = self.renderer_gaussian3d.render(gaussian_params=current_scene, viewpoint_camera=render_cam, bg=bg)
                             batch_renderings.append(ret_dict["image"])
-                            batch_cams.append(torch.concat([extrinsic.reshape(-1), intrinsics], dim=0))
+                            batch_cams.append(torch.concat([extrinsic.reshape(-1), gen_c[batch_idx, 16:]], dim=0))
 
                         renderings = torch.stack(batch_renderings, dim=0)
                         cams = torch.stack(batch_cams, dim=0)
@@ -121,6 +119,7 @@ class StyleGAN2Loss(Loss):
                 logger.add("Loss", "D_loss", gen_logits)
                 logger.add("Loss_Sign", "signs_fake", gen_logits.sign())
                 logger.add("Loss", "G_loss", loss_Gmain)
+                # logger.add("Training", "Dynamic Reg Steps", dynamic_opt_steps)
 
             with torch.autograd.profiler.record_function('Gmain_backward'):
                 ((loss_Gmain).mean().mul(gain) + dist_center.mean() * self.coeffs['center_dists'] + dist * self.coeffs['knn_dists']).backward()
@@ -139,11 +138,13 @@ class StyleGAN2Loss(Loss):
 
                 gen_logits = self.run_D(gen_result, gen_c, blur_sigma=blur_sigma, update_emas=True)
                 loss_Dgen = torch.nn.functional.softplus(gen_logits)
+                self.running_score_fake = gen_logits.detach().mean() * 0.01 + self.running_score_fake * 0.99
                 logger.add("Scores", "scores_fake", gen_logits)
+                logger.add("Scores Running", "scores_fake_running", self.running_score_fake)
                 logger.add("Loss_Sign", "signs_fake", gen_logits.sign())
                 
             with torch.autograd.profiler.record_function('Dgen_backward'):
-                (loss_Dgen).mean().mul(gain).backward() # Do not use contrastive loss for D_gen
+                (loss_Dgen).mean().mul(gain).backward()
                 clip_grad_norm_(self.D.parameters(), max_norm=5)
 
         # Dmain: Maximize logits for real images.
@@ -155,7 +156,9 @@ class StyleGAN2Loss(Loss):
                 real_img_tmp = {'image': real_img_tmp_image}
                 real_logits = self.run_D(real_img_tmp, real_c, blur_sigma=blur_sigma)
 
+                self.running_score_real = real_logits.detach().mean() * 0.01 + self.running_score_real * 0.99
                 logger.add("Scores", "scores_real", real_logits)
+                logger.add("Scores Running", "scores_real_running", self.running_score_real)
                 logger.add("Loss_Sign", "signs_real", real_logits.sign())
 
                 loss_Dreal = 0

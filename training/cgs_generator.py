@@ -44,7 +44,8 @@ class CGSGenerator(torch.nn.Module):
         self._xyz = torch.nn.Parameter(random_coords * torch.rsqrt(torch.mean(random_coords ** 2, dim=1, keepdim=True) + 1e-8) * 0.5 * 0.6)
         self.point_gen = PointGenerator(w_dim=w_dim, options=self.custom_options)
         self.renderer_gaussian3d = Renderer(sh_degree=0)
-        self.mapping_network = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.point_gen.num_ws + 1, **mapping_kwargs)
+        self.mapping_network = MappingNetwork(z_dim=z_dim, c_dim=c_dim, w_dim=w_dim, num_ws=self.point_gen.num_ws, **mapping_kwargs)
+        self.num_ws = self.mapping_network.num_ws
 
     def mapping(self, z, c, truncation_psi=1, truncation_cutoff=None, update_emas=False):
         return self.mapping_network(z, torch.zeros_like(c), truncation_psi=truncation_psi, truncation_cutoff=truncation_cutoff, update_emas=update_emas)
@@ -52,6 +53,9 @@ class CGSGenerator(torch.nn.Module):
     def synthesis(self, ws, c, resolution=None, update_emas=False, gs_params=None, random_bg=True, render_output=True, **synthesis_kwargs):
         cam2world_matrix = c[:, :16].view(-1, 4, 4)
         intrinsics = c[:, 16:25].view(-1, 3, 3)
+
+        if len(ws.shape) == 2:
+            ws = ws[:, None, :].tile(1, self.num_ws, 1)
 
         if resolution is None:
             resolution = self.resolution
@@ -61,7 +65,7 @@ class CGSGenerator(torch.nn.Module):
         focalx, focaly, near, far = intrinsics[:, 0,0], intrinsics[:, 1,1], 0.1, 10
 
         sample_coordinates = torch.tanh(self._xyz.unsqueeze(0).repeat(len(ws), 1, 1))
-        sample_coordinates, sample_scale, sample_rotation, sample_color, sample_opacity, anchors = self.point_gen(sample_coordinates, ws)
+        sample_coordinates, sample_scale, sample_rotation, sample_color, sample_opacity, anchors, features = self.point_gen(sample_coordinates, ws)
         dec_out = {}
         dec_out["sample_coordinates"] = sample_coordinates
         dec_out["scale"] = sample_scale
@@ -92,7 +96,7 @@ class CGSGenerator(torch.nn.Module):
                 ret_dict = self.renderer_gaussian3d.render(gaussian_params_i, cur_cam, bg=bg)
                 rendered_images.append(ret_dict["image"].unsqueeze(0))
 
-        return_dict = {'anchors': anchors[0], 'gaussian_params': gaussian_params}
+        return_dict = {'anchors': anchors[0], 'gaussian_params': gaussian_params, "features": features}
         if render_output:
             return_dict["image"] = torch.cat(rendered_images, dim=0).to(ws.device)
         return return_dict

@@ -29,11 +29,12 @@ def save_image_grid(img, fname, drange, grid_size, wandb_logger=None):
         import wandb
         log_img = wandb.Image(img)
         wandb_logger.log({"samples": log_img})
-    assert C in [1, 3]
-    if C == 1:
-        PIL.Image.fromarray(img[:, :, 0], 'L').save(fname)
-    if C == 3:
-        PIL.Image.fromarray(img, 'RGB').save(fname)
+    else:
+        assert C in [1, 3]
+        if C == 1:
+            PIL.Image.fromarray(img[:, :, 0], 'L').save(fname)
+        if C == 3:
+            PIL.Image.fromarray(img, 'RGB').save(fname)
 
 
 def print_stats(_dict):

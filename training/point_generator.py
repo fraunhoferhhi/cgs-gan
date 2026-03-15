@@ -133,7 +133,6 @@ def get_scaled_directional_vector_from_quaternion(r, s, eps=0.001):
     norm = torch.sqrt(r[:, 0] * r[:, 0] + r[:, 1] * r[:, 1] + r[:, 2] * r[:, 2] + r[:, 3] * r[:, 3])
     q = r / (norm[:, None] + eps)
 
-    # R = torch.zeros((q.size(0), 3, 3), device='cuda')
     R = torch.zeros((q.size(0), 3, 3), device=r.device)
 
     r = q[:, 0]
@@ -199,7 +198,7 @@ class PointGenerator(nn.Module):
         self.upsample_ratio =       [1, 4, 4,  4,  2,   2,   2,   2]
         self.upsample_ratio_accum = [1, 4, 16, 64, 128, 256, 512, 1024]
 
-        def get_features(layer, upsample_ratio):
+        def get_features(layer):
             if layer == 7:
                 return 8
             return max(16, 512 // 2 ** layer)
@@ -213,12 +212,13 @@ class PointGenerator(nn.Module):
             opacity=    EasyDict(out_dim=1, weight_init=1.0, lr_mult=1.0, bias_init=0.0),
         )
 
-        self.num_ws = 0
         self.transformer = Transformer(width=512, layers=self.n_transformer, w_dim=w_dim)
+        self.num_ws = self.transformer.num_ws
+
         self.upsample_layers = nn.ModuleList([
             PointUpsample_subpixel(
                 in_features=512,
-                out_features=get_features(i, self.upsample_ratio[i]),
+                out_features=get_features(i),
                 upsample_ratio=self.upsample_ratio_accum[i]
             ) for i in range(self.n_transformer)
         ])
@@ -235,7 +235,7 @@ class PointGenerator(nn.Module):
         for k in _out_keys.keys():
             for i in range(self.n_transformer):
                 self.anchors[k].append(FullyConnectedLayer(
-                    in_features=get_features(i, self.upsample_ratio[i]),
+                    in_features=get_features(i),
                     out_features=_out_keys[k].out_dim,
                     lr_multiplier=_out_keys[k].lr_mult,
                     activation="linear",
@@ -243,7 +243,7 @@ class PointGenerator(nn.Module):
                     bias_init=_out_keys[k].bias_init,
                 ))
                 self.gaussians[k].append(FullyConnectedLayer(
-                    in_features=get_features(i, self.upsample_ratio[i]),
+                    in_features=get_features(i),
                     out_features=_out_keys[k].out_dim,
                     lr_multiplier=_out_keys[k].lr_mult,
                     activation="linear",
@@ -256,8 +256,6 @@ class PointGenerator(nn.Module):
         self.register_buffer("rotation_init", torch.tensor([1, 0, 0, 0]))
         self.register_buffer("color_init", torch.tensor(torch.zeros([3])))
         self.register_buffer("opacity_init", inverse_sigmoid(0.1 * torch.ones([1])))
-
-        self.xyz_output_scale = options["xyz_output_scale"]  # default: 0.1
 
         min_scale = np.exp(options["scale_end"])
         self.percent_dense = min_scale  # if scale is less than min_scale, do not apply split
@@ -282,6 +280,8 @@ class PointGenerator(nn.Module):
 
         transformer_out = self.transformer(x, ws)
 
+        features = []
+
         for i in range(self.n_transformer):
             is_last_layer = i == self.n_transformer - 1
             is_first_layer = i == 0
@@ -289,6 +289,7 @@ class PointGenerator(nn.Module):
             # create features (512 points, 512 channels)
             current_features = transformer_out[i]
             upsampled_features = self.upsample_layers[i](current_features)
+            features.append(upsampled_features)
 
             # upsample anchors
             if not is_first_layer: # not for the first layer since it has not prior anchors
@@ -331,6 +332,7 @@ class PointGenerator(nn.Module):
             output_gaussians.color,
             output_gaussians.opacity,
             [output_anchors.xyz, output_anchors.scale, output_anchors.rotation, output_anchors.color, output_anchors.opacity],
+            features
         )
 
     def postprocessing_block(self, gaussian: EasyDict, prev_anchor: EasyDict, is_first_anchor=False):

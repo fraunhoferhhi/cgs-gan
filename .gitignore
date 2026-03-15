@@ -3,3 +3,5 @@ out
 training-runs
 .idea
 **/__pycache__/**
+training-results
+neurohum_viz

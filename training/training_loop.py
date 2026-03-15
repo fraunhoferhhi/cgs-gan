@@ -93,18 +93,10 @@ def training_loop(
     # Print network summary tables.
     if rank == 0:
         z = torch.rand([batch_gpu, G.z_dim], device=device)
-        cam = torch.tensor([[
-            0.942, 0.0342, 0.333, -0.836,
-            0.039, -0.999, -0.009, 0.017,
-            0.332, 0.0225, -0.942, 2.566,
-            0.0, 0.0, 0.0, 1.0,
-            4.2647, 0.0, 0.5,
-            0.0, 4.2647, 0.5,
-            0.0, 0.0, 1.0
-        ]], device=device)  # do not use random or zero to avoid gpu memory blow up
-        c = torch.tile(cam, [batch_gpu, 1])
-        img = misc.print_module_summary(G, [z, c])
-        misc.print_module_summary(D, [img, c])
+        _, label = next(training_set_iterator)
+        label = label.to(device)[:batch_gpu, ...]
+        img = misc.print_module_summary(G, [z, label])
+        misc.print_module_summary(D, [img, label])
         torch.cuda.empty_cache()
 
     # Distribute across GPUs.
@@ -124,17 +116,11 @@ def training_loop(
     for name, module, opt_kwargs, reg_interval in [('G', G, G_opt_kwargs, G_reg_interval), ('D', D, D_opt_kwargs, D_reg_interval)]:
         if reg_interval is None:
             if name == "G":
-                model_params, gaussian_params, gaussian_params_names = [], [], []
+                model_params = []
+                xyz_params = []
                 for n, p in module.named_parameters():
-                    if n == '_xyz':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("xyz")
-                    elif n == '_scale':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("scaling")
-                    elif n == '_rotation':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("rotation")
+                    if "xyz" in n:
+                        xyz_params.append(p)
                     else:
                         model_params.append(p)
 
@@ -142,8 +128,7 @@ def training_loop(
                     len(list(module.parameters())), len(list(module.named_parameters())))
                 params_groups = []
                 params_groups.append({"params": model_params})
-                for p, n in zip(gaussian_params, gaussian_params_names):
-                    params_groups.append({"params": p, "name": n})
+                params_groups.append({"params": xyz_params, "lr": opt_kwargs["lr"] * 0.01})
 
                 opt = dnnlib.util.construct_class_by_name(params_groups, **opt_kwargs)  # subclass of torch.optim.Optimizer
             else:
@@ -158,27 +143,19 @@ def training_loop(
             opt_kwargs.betas = [beta ** mb_ratio for beta in opt_kwargs.betas]
 
             if name == "G":
-                model_params, gaussian_params, gaussian_params_names = [], [], []
+                model_params = []
+                xyz_params = []
                 for n, p in module.named_parameters():
-                    if n == '_xyz':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("xyz")  # name?
-                    elif n == '_scale':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("scaling")  # name?
-                    elif n == '_rotation':
-                        gaussian_params.append(p)
-                        gaussian_params_names.append("rotation")  # name?
+                    if "xyz" in n:
+                        xyz_params.append(p)
                     else:
                         model_params.append(p)
 
                 assert len(list(module.parameters())) == len(list(module.named_parameters())), "param: {} \t named_param:{}".format(
                     len(list(module.parameters())), len(list(module.named_parameters())))
-
                 params_groups = []
                 params_groups.append({"params": model_params})
-                for p, n in zip(gaussian_params, gaussian_params_names):
-                    params_groups.append({"params": [p], "name": n})
+                params_groups.append({"params": xyz_params, "lr": opt_kwargs["lr"] * 0.01})
 
                 opt = dnnlib.util.construct_class_by_name(params_groups, **opt_kwargs)  # subclass of torch.optim.Optimizer
             else:
@@ -266,8 +243,16 @@ def training_loop(
             phase.opt.zero_grad(set_to_none=True)
             phase.module.requires_grad_(True)
             for real_img, real_c, gen_z, gen_c in zip(phase_real_img, phase_real_c, phase_gen_z, phase_gen_c):
-                loss.accumulate_gradients(phase=phase.name, real_img=real_img, real_c=real_c, gen_z=gen_z, gen_c=gen_c, gain=phase.interval, cur_nimg=cur_nimg,
-                                          logger=logger)
+                loss.accumulate_gradients(
+                    phase=phase.name,
+                    real_img=real_img,
+                    real_c=real_c,
+                    gen_z=gen_z,
+                    gen_c=gen_c,
+                    gain=phase.interval,
+                    cur_nimg=cur_nimg,
+                    logger=logger
+                )
             phase.module.requires_grad_(False)
 
             # Update weights.
