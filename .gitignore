@@ -3,3 +3,4 @@ out
 training-runs
 .idea
 **/__pycache__/**
+training-results

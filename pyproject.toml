@@ -1,0 +1,52 @@
+[project]
+name = "cgsgan"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+dependencies = [
+    # Core scientific stack
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "pillow",
+    "imageio",
+    "imageio-ffmpeg",
+
+    # Utilities
+    "click",
+    "requests",
+    "tqdm",
+    "ninja",
+
+    # Logging / training tools
+    "wandb",
+    "tensorboard",
+    "psutil",
+
+    # Vision / CV
+    "opencv-python",
+    "pyspng",
+    "plyfile",
+
+    # PyTorch (CUDA 13 build via custom index)
+    "torch==2.10.0+cu130",
+    "torchvision==0.25.0+cu130",
+    "torchaudio==2.10.0+cu130",
+
+    # 3DGS
+    "diff-gaussian-rasterization",
+]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130" }]
+torchvision = [{ index = "pytorch-cu130" }]
+torchaudio = [{ index = "pytorch-cu130" }]
+diff-gaussian-rasterization = { git = "https://github.com/ashawkey/diff-gaussian-rasterization" }
+
+[tool.uv]
+no-build-isolation-package = ["diff-gaussian-rasterization"]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
