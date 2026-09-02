@@ -87,7 +87,7 @@ This will download the entire FFHQ dataset with the new cropping and in high res
 
 Our data preprocessing uses [Insightface](https://github.com/deepinsight/insightface) for keypoint detection, [3DDFA_v2](https://github.com/cleardusk/3DDFA_V2) 3D for camera estimation and [MODNet](https://github.com/ZHKKKe/MODNet) for background masking.
 
-The full pipeline can be found here: [https://github.com/Florian-Barthel/gan_preprocessing](https://github.com/Florian-Barthel/gan_preprocessing/tree/master).
+The full pipeline can be found here: [cgs_gan_preprocessing](https://github.com/Florian-Barthel/cgs_gan_preprocessing).
 
 ## Pre-trained Models
 
